@@ -1,0 +1,486 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <title>Counting Stick Visualisation</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f5f5f5;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .instruction {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .input-area {
+            background: white;
+            padding: 20px;
+            max-width: 700px;
+            margin: auto;
+            border-radius: 12px;
+        }
+
+        .input-box {
+            display: inline-block;
+            margin: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 130px;
+            padding: 10px;
+            font-size: 20px;
+            text-align: center;
+            border: 2px solid #aaa;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 11px 22px;
+            margin: 8px;
+            font-size: 17px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .enter-button {
+            background: #555;
+            color: white;
+        }
+
+        .add-button {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .subtract-button {
+            background: #f44336;
+            color: white;
+        }
+
+        .reset-button {
+            background: #777;
+            color: white;
+        }
+
+        .visual-box {
+            background: white;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: left;
+        }
+
+        .visual-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .operation-line {
+            font-size: 30px;
+            margin: 18px 0;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        .sticks {
+            letter-spacing: 4px;
+        }
+
+        .number-result {
+            font-size: 20px;
+            margin-left: 10px;
+        }
+
+        .current-total {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 25px;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <h1>Counting Stick Visualisation</h1>
+
+    <div class="instruction">
+        Enter a number, then explore addition and subtraction using sticks.
+    </div>
+
+
+    <!-- INPUT AREA -->
+
+    <div class="input-area">
+
+        <!-- Initial Number -->
+
+        <div class="input-box">
+
+            <label>Initial Number</label>
+
+            <input
+                type="number"
+                id="initialNumber"
+                min="0"
+                step="1"
+                value="0"
+            >
+
+            <br>
+
+            <button
+                class="enter-button"
+                onclick="setInitialNumber()">
+                Enter
+            </button>
+
+        </div>
+
+
+        <!-- Addition -->
+
+        <div class="input-box">
+
+            <label>Addition</label>
+
+            <input
+                type="number"
+                id="addition"
+                min="0"
+                step="1"
+                value="0"
+            >
+
+            <br>
+
+            <button
+                class="add-button"
+                onclick="addNumber()">
+                Addition
+            </button>
+
+        </div>
+
+
+        <!-- Subtraction -->
+
+        <div class="input-box">
+
+            <label>Subtraction</label>
+
+            <input
+                type="number"
+                id="subtraction"
+                min="0"
+                step="1"
+                value="0"
+            >
+
+            <br>
+
+            <button
+                class="subtract-button"
+                onclick="subtractNumber()">
+                Subtraction
+            </button>
+
+        </div>
+
+
+        <br>
+
+        <button
+            class="reset-button"
+            onclick="resetApp()">
+            Reset
+        </button>
+
+    </div>
+
+
+    <!-- VISUALISATION AREA -->
+
+    <div class="visual-box">
+
+        <div class="visual-title">
+            Visualisation
+        </div>
+
+        <div id="visualisation">
+            <div class="operation-line">
+                Enter an initial number to begin.
+            </div>
+        </div>
+
+        <div class="current-total" id="currentTotal">
+            Current total: 0
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // Current number of sticks
+        let total = 0;
+
+
+        // Create groups of counting sticks
+        function createSticks(number) {
+
+            if (number === 0) {
+                return "0";
+            }
+
+            let result = "";
+
+            // Number of complete groups of five
+            let groupsOfFive = Math.floor(number / 5);
+
+            // Remaining sticks
+            let remaining = number % 5;
+
+
+            // Create groups of five
+            for (let i = 0; i < groupsOfFive; i++) {
+
+                result += "||||/ ";
+
+            }
+
+
+            // Create remaining sticks
+            for (let i = 0; i < remaining; i++) {
+
+                result += "|";
+
+            }
+
+
+            return result.trim();
+        }
+
+
+        // Make sure the input is a valid
+        // non-negative whole number
+        function getNumber(id) {
+
+            let value =
+                Number(document.getElementById(id).value);
+
+            if (
+                !Number.isInteger(value) ||
+                value < 0
+            ) {
+                return 0;
+            }
+
+            return value;
+        }
+
+
+        // Add a new visualisation line
+        function addVisualLine(content) {
+
+            let visualisation =
+                document.getElementById("visualisation");
+
+            let line =
+                document.createElement("div");
+
+            line.className = "operation-line";
+
+            line.innerHTML = content;
+
+            visualisation.appendChild(line);
+        }
+
+
+        // Set the initial number
+        function setInitialNumber() {
+
+            let initial =
+                getNumber("initialNumber");
+
+            // Set the current total
+            total = initial;
+
+
+            // Clear previous visualisation
+            document.getElementById(
+                "visualisation"
+            ).innerHTML = "";
+
+
+            // Show initial sticks
+            addVisualLine(
+                `<span class="sticks">
+                    ${createSticks(initial)}
+                </span>
+                <span class="number-result">
+                    = ${initial} sticks
+                </span>`
+            );
+
+
+            updateTotal();
+        }
+
+
+        // Addition operation
+        function addNumber() {
+
+            let addition =
+                getNumber("addition");
+
+            let oldTotal = total;
+
+            let newTotal =
+                oldTotal + addition;
+
+
+            // Add the new visualisation line
+            addVisualLine(
+                `<span class="sticks">
+                    ${createSticks(oldTotal)}
+                </span>
+                + 
+                <span class="sticks">
+                    ${createSticks(addition)}
+                </span>
+                =
+                <span class="sticks">
+                    ${createSticks(newTotal)}
+                </span>
+                <span class="number-result">
+                    = ${newTotal} sticks
+                </span>`
+            );
+
+
+            // Update total
+            total = newTotal;
+
+            updateTotal();
+        }
+
+
+        // Subtraction operation
+        function subtractNumber() {
+
+            let subtraction =
+                getNumber("subtraction");
+
+            let oldTotal = total;
+
+
+            // Do not allow subtraction
+            // to create a negative number
+            let newTotal =
+                oldTotal - subtraction;
+
+            if (newTotal < 0) {
+                newTotal = 0;
+            }
+
+
+            // Add the new visualisation line
+            addVisualLine(
+                `<span class="sticks">
+                    ${createSticks(oldTotal)}
+                </span>
+                -
+                <span class="sticks">
+                    ${createSticks(subtraction)}
+                </span>
+                =
+                <span class="sticks">
+                    ${createSticks(newTotal)}
+                </span>
+                <span class="number-result">
+                    = ${newTotal} sticks
+                </span>`
+            );
+
+
+            // Update total
+            total = newTotal;
+
+            updateTotal();
+        }
+
+
+        // Update current total
+        function updateTotal() {
+
+            document.getElementById(
+                "currentTotal"
+            ).textContent =
+                "Current total: " + total;
+
+        }
+
+
+        // Reset the app
+        function resetApp() {
+
+            total = 0;
+
+            document.getElementById(
+                "initialNumber"
+            ).value = 0;
+
+            document.getElementById(
+                "addition"
+            ).value = 0;
+
+            document.getElementById(
+                "subtraction"
+            ).value = 0;
+
+
+            document.getElementById(
+                "visualisation"
+            ).innerHTML = `
+                <div class="operation-line">
+                    Enter an initial number to begin.
+                </div>
+            `;
+
+
+            updateTotal();
+        }
+
+    </script>
+
+</body>
+
+</html>
+```
